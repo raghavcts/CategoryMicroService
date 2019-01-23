@@ -40,7 +40,7 @@ class CategoryServiceImplTest extends Specification {
         when: "Getting expected products"
         def products = categoryService.getCategory(categoryId, labelType);
         then: "expecting that price label displays the was,then and now values"
-        products.products.get(1).getPriceLabel().contains("then £68")
+        products.products.get(1).getPriceLabel().contains("then £75")
     }
 
     def "calling getCategory with categoryId AND LabelType:ShowWasNow"() {
@@ -52,7 +52,7 @@ class CategoryServiceImplTest extends Specification {
         when: "Getting expected products"
         def products = categoryService.getCategory(categoryId, labelType);
         then: "expecting that price label displays the was and now values"
-        !products.products.get(1).getPriceLabel().contains("then £68")
+        products.products.get(1).getPriceLabel().contains("was £99")
     }
 
     def "calling getCategory with categoryId AND LabelType:ShowPercDscount"() {
@@ -64,7 +64,7 @@ class CategoryServiceImplTest extends Specification {
         when: "Getting expected products"
         def products = categoryService.getCategory(categoryId, labelType);
         then: "expecting that price label displays the percentage value"
-        products.products.get(0).getPriceLabel().contains("£1.32 off - now £99")
+        products.products.get(0).getPriceLabel().contains("£50% off - now £74")
     }
 
 }
