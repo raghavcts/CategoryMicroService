@@ -8,5 +8,5 @@ data class Product(val productId: String, val title: String, val nowPrice: Strin
                    val colorSwatches: List<ColorSwatches>) {
 
     @JsonIgnore
-    var maxReduction: Int? = 0
+    var maxReduction: Float? = 0.0f
 }

@@ -11,6 +11,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import kotlin.math.roundToInt
 
 @Service
 class CategoryServiceImpl(
@@ -49,7 +50,9 @@ class CategoryServiceImpl(
                 productList!!.add(product)
             }
         }
-        productList!!.sortedByDescending { it.maxReduction }
+        productList!!.sortWith(Comparator { product1, product2 ->
+            product2.maxReduction!!.roundToInt() - product1.maxReduction!!.roundToInt()
+        })
         return productList
     }
 
@@ -64,10 +67,14 @@ class CategoryServiceImpl(
         return colorSwatches
     }
 
-    private fun calculatePriceReduction(was: JsonElement?, nowPrice: String?): Int {
-        val wasInt = if (was == null || was.asString == "") 0 else was.asString.toFloat().toInt()
-        val nowInt = if (nowPrice.isNullOrEmpty()) 0 else nowPrice!!.toFloat().toInt()
-        return wasInt - nowInt
+    private fun calculatePriceReduction(was: JsonElement?, nowPrice: String?): Float {
+        val wasFloat: Float = if (was == null || was.asString == "") 0.0f else was.asFloat
+        val nowFloat: Float = if (nowPrice.isNullOrEmpty()) 0.0f else nowPrice!!.toFloat()
+        val maxReduction: Float = wasFloat - nowFloat
+        if (maxReduction > 0) {
+            return (maxReduction / wasFloat) * 100
+        }
+        return maxReduction
     }
 
     private fun calculatePricelabel(was: JsonElement?, now: String?, then1: JsonElement?, then2: JsonElement?, currencyCode:
@@ -81,11 +88,10 @@ class CategoryServiceImpl(
             "ShowWasThenNow" -> {
                 priceLabel = if (thenPriceFmt.equals("0.00")) "was $wasPriceFmt,now $nowPriceFmt"
                 else "was $wasPriceFmt,then $thenPriceFmt,now $nowPriceFmt"
-
             }
             "ShowPercDscount" -> {
                 if ((was != null && !was.asString.isEmpty()) && !now.isNullOrEmpty()) {
-                    val discount: Float = (was.asFloat - now!!.substring(1).toFloat()) / now.toFloat()
+                    val discount: Float = ((was.asFloat - now!!.toFloat()) / was.asFloat) * 100
                     val disountString: String? = PriceFormatter.formatPriceLabel(discount.toString())
                     priceLabel = "$disountString% off - now $nowPriceFmt"
                 }
