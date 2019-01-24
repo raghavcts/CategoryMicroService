@@ -34,15 +34,16 @@ class CategoryServiceImpl(
     private fun createProducts(productResponse: JsonArray, labelType: String?): MutableList<Product> {
         val productList: MutableList<Product>? = arrayListOf()
         productResponse.map { ele ->
-            val title = ele.asJsonObject["title"].asString
-            val productId = ele.asJsonObject["productId"].asString
-            val colorSwatchesResp = ele.asJsonObject["colorSwatches"].asJsonArray
-            val colorSwatches: MutableList<ColorSwatches> = createColorSwatches(colorSwatchesResp)
+
             val price: JsonElement? = ele.asJsonObject["price"]
             val currencyCode: String = price!!.asJsonObject["currency"].asString
             val nowPrice: String? = calculateNowPrice(price.asJsonObject["now"])
+            val title = ele.asJsonObject["title"].asString
             val priceReduction = calculatePriceReduction(price.asJsonObject["was"], nowPrice)
             if (priceReduction > 0) {
+                val productId = ele.asJsonObject["productId"].asString
+                val colorSwatchesResp = ele.asJsonObject["colorSwatches"].asJsonArray
+                val colorSwatches: MutableList<ColorSwatches> = createColorSwatches(colorSwatchesResp)
                 val priceLabel: String? = calculatePricelabel(price.asJsonObject["was"], nowPrice,
                         price.asJsonObject["then1"], price.asJsonObject["then2"], currencyCode, labelType)
                 val product = Product(productId, title, PriceFormatter.formatPriceLabel(nowPrice!!, currencyCode)!!, priceLabel!!, colorSwatches)
@@ -118,7 +119,7 @@ class CategoryServiceImpl(
             val nowValStr: String = now.asString
             (nowValStr)
         } catch (e: UnsupportedOperationException) {
-            val nowJsonObj = now.asJsonObject["to"]
+            val nowJsonObj = now.asJsonObject["from"]
             (nowJsonObj.asString)
         }
         return nowVal
