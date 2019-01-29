@@ -1,6 +1,7 @@
 package com.demo.category.service
 
 import com.demo.category.api.CategoryApi
+import com.demo.category.common.CategoryNotFoundException
 import com.demo.category.common.PriceFormatter
 import com.demo.category.model.BasicColorsEnum
 import com.demo.category.model.ColorSwatches
@@ -34,13 +35,12 @@ class CategoryServiceImpl(
     private fun createProducts(productResponse: JsonArray, labelType: String?): MutableList<Product> {
         val productList: MutableList<Product>? = arrayListOf()
         productResponse.map { ele ->
-
             val price: JsonElement? = ele.asJsonObject["price"]
             val currencyCode: String = price!!.asJsonObject["currency"].asString
             val nowPrice: String? = calculateNowPrice(price.asJsonObject["now"])
-            val title = ele.asJsonObject["title"].asString
             val priceReduction = calculatePriceReduction(price.asJsonObject["was"], nowPrice)
             if (priceReduction > 0) {
+                val title = ele.asJsonObject["title"].asString
                 val productId = ele.asJsonObject["productId"].asString
                 val colorSwatchesResp = ele.asJsonObject["colorSwatches"].asJsonArray
                 val colorSwatches: MutableList<ColorSwatches> = createColorSwatches(colorSwatchesResp)
@@ -98,6 +98,7 @@ class CategoryServiceImpl(
                 }
             }
             "ShowWasNow" -> priceLabel = "was $wasPriceFmt,now $nowPriceFmt"
+            else -> throw CategoryNotFoundException(404, "Invalid Price Label Input")
 
         }
         return priceLabel

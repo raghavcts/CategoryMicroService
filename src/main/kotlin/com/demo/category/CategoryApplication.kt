@@ -31,7 +31,7 @@ class SpringFoxConfig {
     fun apiDocket(): Docket {
         return Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.any())
+                .apis(RequestHandlerSelectors.basePackage("com.demo"))
                 .paths(PathSelectors.any())
                 .build()
     }
