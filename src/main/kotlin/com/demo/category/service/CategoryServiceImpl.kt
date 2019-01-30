@@ -1,8 +1,9 @@
 package com.demo.category.service
 
 import com.demo.category.api.CategoryApi
-import com.demo.category.common.CategoryNotFoundException
+import com.demo.category.common.CategoryConstants
 import com.demo.category.common.PriceFormatter
+import com.demo.category.common.exception.CategoryNotFoundException
 import com.demo.category.model.BasicColorsEnum
 import com.demo.category.model.ColorSwatches
 import com.demo.category.model.Product
@@ -11,13 +12,14 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import kotlin.math.roundToInt
 
 @Service
 class CategoryServiceImpl(
         private var categoryApi: CategoryApi) : CategoryService {
-    @Value("\${CATEGORY_API_KEY}")
+    @Value("\${category.api.key}")
     val apiKey: String = ""
 
     override fun getCategory(categoryId: String, labelType: String?): Products {
@@ -38,13 +40,17 @@ class CategoryServiceImpl(
             val price: JsonElement? = ele.asJsonObject["price"]
             val currencyCode: String = price!!.asJsonObject["currency"].asString
             val nowPrice: String? = calculateNowPrice(price.asJsonObject["now"])
-            val priceReduction = calculatePriceReduction(price.asJsonObject["was"], nowPrice)
+            val wasPrice: String? = when {
+                price.asJsonObject["was"]!!.asString.isNullOrEmpty() -> CategoryConstants.DFAULT_ZERO_VAL
+                else -> price.asJsonObject["was"].asString
+            }
+            val priceReduction = calculatePriceReduction(wasPrice, nowPrice)
             if (priceReduction > 0) {
                 val title = ele.asJsonObject["title"].asString
                 val productId = ele.asJsonObject["productId"].asString
                 val colorSwatchesResp = ele.asJsonObject["colorSwatches"].asJsonArray
                 val colorSwatches: MutableList<ColorSwatches> = createColorSwatches(colorSwatchesResp)
-                val priceLabel: String? = calculatePricelabel(price.asJsonObject["was"], nowPrice,
+                val priceLabel: String? = calculatePricelabel(wasPrice, nowPrice,
                         price.asJsonObject["then1"], price.asJsonObject["then2"], currencyCode, labelType)
                 val product = Product(productId, title, PriceFormatter.formatPriceLabel(nowPrice!!, currencyCode)!!, priceLabel!!, colorSwatches)
                 product.maxReduction = priceReduction
@@ -68,9 +74,9 @@ class CategoryServiceImpl(
         return colorSwatches
     }
 
-    private fun calculatePriceReduction(was: JsonElement?, nowPrice: String?): Float {
-        val wasFloat: Float = if (was == null || was.asString == "") 0.0f else was.asFloat
-        val nowFloat: Float = if (nowPrice.isNullOrEmpty()) 0.0f else nowPrice!!.toFloat()
+    private fun calculatePriceReduction(was: String?, nowPrice: String?): Float {
+        val wasFloat: Float = was!!.toFloat()
+        val nowFloat: Float = nowPrice!!.toFloat()
         val maxReduction: Float = wasFloat - nowFloat
         if (maxReduction > 0) {
             return (maxReduction / wasFloat) * 100
@@ -78,27 +84,27 @@ class CategoryServiceImpl(
         return maxReduction
     }
 
-    private fun calculatePricelabel(was: JsonElement?, now: String?, then1: JsonElement?, then2: JsonElement?, currencyCode:
+    private fun calculatePricelabel(was: String?, now: String?, then1: JsonElement?, then2: JsonElement?, currencyCode:
     String, labelType: String?): String? {
         var priceLabel: String? = ""
-        val wasPriceFmt: String? = PriceFormatter.formatPriceLabel(if (was == null) "0.00" else (was.asString), currencyCode)
+        val wasPriceFmt: String? = PriceFormatter.formatPriceLabel(was, currencyCode)
         val thenPriceFmt: String? = PriceFormatter.formatPriceLabel(getThenPrice(then1, then2), currencyCode)
         val nowPriceFmt: String? = PriceFormatter.formatPriceLabel(now, currencyCode)
 
         when (labelType) {
-            "ShowWasThenNow" -> {
-                priceLabel = if (thenPriceFmt.equals("0.00")) "was $wasPriceFmt,now $nowPriceFmt"
+            CategoryConstants.SHOW_WAS_TEHN_NOW -> {
+                priceLabel = if (thenPriceFmt.equals(CategoryConstants.DFAULT_ZERO_VAL)) "was $wasPriceFmt,now $nowPriceFmt"
                 else "was $wasPriceFmt,then $thenPriceFmt,now $nowPriceFmt"
             }
-            "ShowPercDscount" -> {
-                if ((was != null && !was.asString.isEmpty()) && !now.isNullOrEmpty()) {
-                    val discount: Float = ((was.asFloat - now!!.toFloat()) / was.asFloat) * 100
+            CategoryConstants.SHOW_PERC_DISCOUNT -> {
+                if (!was.equals(CategoryConstants.DFAULT_ZERO_VAL)) {
+                    val discount: Float = ((was!!.toFloat() - now!!.toFloat()) / was.toFloat()) * 100
                     val disountString: String? = PriceFormatter.formatPriceLabel(discount.toString())
                     priceLabel = "$disountString% off - now $nowPriceFmt"
                 }
             }
-            "ShowWasNow" -> priceLabel = "was $wasPriceFmt,now $nowPriceFmt"
-            else -> throw CategoryNotFoundException(404, "Invalid Price Label Input")
+            CategoryConstants.SHOW_WAS_NOW -> priceLabel = "was $wasPriceFmt,now $nowPriceFmt"
+            else -> throw CategoryNotFoundException(HttpStatus.NOT_FOUND.value(), "Invalid Price Label Input")
 
         }
         return priceLabel
@@ -106,23 +112,20 @@ class CategoryServiceImpl(
 
     private fun getThenPrice(then1: JsonElement?, then2: JsonElement?): String? {
         return when {
-            then1 != null -> then1.asString
-            then2 != null -> then2.asString
+            !then1!!.asString.isNullOrEmpty() -> then1.asString
+            !then2!!.asString.isNullOrEmpty() -> then2.asString
             else -> return ""
         }
     }
 
-    private fun calculateNowPrice(now: JsonElement?): String? {
-        val nowVal: String?
-        nowVal = if (now == null) {
-            "0.00"
-        } else try {
-            val nowValStr: String = now.asString
-            (nowValStr)
-        } catch (e: UnsupportedOperationException) {
-            val nowJsonObj = now.asJsonObject["from"]
-            (nowJsonObj.asString)
+    private fun calculateNowPrice(now: JsonElement?) = when {
+        now!!.isJsonObject -> {
+            if (now.asJsonObject["from"].asString.isNullOrEmpty()) CategoryConstants.DFAULT_ZERO_VAL
+            else now.asJsonObject["from"].asString
         }
-        return nowVal
+        else -> {
+            if (now.asString.isNullOrEmpty()) CategoryConstants.DFAULT_ZERO_VAL
+            else now.asString
+        }
     }
 }

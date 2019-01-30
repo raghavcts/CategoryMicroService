@@ -1,5 +1,7 @@
 package com.demo.category.common
 
+import com.demo.category.common.exception.CategoryException
+import com.demo.category.common.exception.CategoryNotFoundException
 import feign.Response
 import feign.codec.ErrorDecoder
 

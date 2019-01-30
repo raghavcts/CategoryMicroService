@@ -1,7 +1,7 @@
 package com.demo.category.controller
 
-import com.demo.category.common.CategoryException
-import com.demo.category.common.CategoryNotFoundException
+import com.demo.category.common.exception.CategoryException
+import com.demo.category.common.exception.CategoryNotFoundException
 import com.demo.category.model.Products
 import com.demo.category.service.CategoryService
 import io.swagger.annotations.Api
@@ -32,14 +32,14 @@ class CategoryController(@Autowired
             val products: Products? = categoryService.getCategory(categoryId, labelType)
             ResponseEntity.ok(products!!)
         } catch (e: CategoryException) {
-            log.error("Internal Error Occured")
+            log.error("Internal Error Occured${e.printStackTrace()}")
             ResponseEntity.ok(Products(arrayListOf()))
         } catch (e: CategoryNotFoundException) {
             log.error("No data found for selected category")
             val map: HashMap<String, String> = hashMapOf("Status" to e.responseStatus)
             ResponseEntity.ok(map)
         } catch (e: Exception) {
-            log.error("Unknown Error Occured")
+            log.error("Unknown Error Occured${e.printStackTrace()}")
             ResponseEntity.ok(Products(arrayListOf()))
         }
     }

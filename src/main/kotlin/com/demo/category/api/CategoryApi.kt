@@ -1,7 +1,7 @@
 package com.demo.category.api
 
-import com.demo.category.common.CategoryException
-import com.demo.category.common.CategoryNotFoundException
+import com.demo.category.common.exception.CategoryException
+import com.demo.category.common.exception.CategoryNotFoundException
 import com.google.gson.JsonObject
 import feign.Headers
 import feign.Param
