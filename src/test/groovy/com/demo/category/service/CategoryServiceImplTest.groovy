@@ -1,9 +1,7 @@
 package com.demo.category.service
 
 import com.demo.category.api.CategoryApi
-import com.demo.category.common.CategoryNotFoundException
-import com.demo.category.service.CategoryService
-import com.demo.category.service.CategoryServiceImpl
+import com.demo.category.common.exception.CategoryNotFoundException
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.stream.JsonReader
@@ -74,7 +72,7 @@ class CategoryServiceImplTest extends Specification {
         //doReturn(jsonObject).when(categoryApi.getCategoryById(categoryId,"apiKey"))
         when(categoryApi.getCategoryById(categoryId, "")).thenReturn(jsonObject)
         when: "Expecting the Invalid Label Type Exception"
-        def products = categoryService.getCategory(categoryId, labelType)
+        categoryService.getCategory(categoryId, labelType)
         then: "expecting that Category Not Found Exception Thrown"
         thrown(CategoryNotFoundException)
     }
