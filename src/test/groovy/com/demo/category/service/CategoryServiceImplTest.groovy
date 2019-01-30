@@ -34,7 +34,7 @@ class CategoryServiceImplTest extends Specification {
         def categoryId = "600001506"
         def labelType = "ShowWasThenNow"
         //doReturn(jsonObject).when(categoryApi.getCategoryById(categoryId,"apiKey"))
-        when(categoryApi.getCategoryById(categoryId, "")).thenReturn(jsonObject)
+        when(categoryApi.getCategoryById(categoryId)).thenReturn(jsonObject)
         when: "Getting expected products"
         def products = categoryService.getCategory(categoryId, labelType)
         then: "expecting that price label displays the was,then and now values"
@@ -46,7 +46,7 @@ class CategoryServiceImplTest extends Specification {
         def categoryId = "600001506"
         def labelType = "ShowWasNow"
         //doReturn(jsonObject).when(categoryApi.getCategoryById(categoryId,"apiKey"))
-        when(categoryApi.getCategoryById(categoryId, "")).thenReturn(jsonObject)
+        when(categoryApi.getCategoryById(categoryId)).thenReturn(jsonObject)
         when: "Getting expected products"
         def products = categoryService.getCategory(categoryId, labelType)
         then: "expecting that price label displays the was and now values"
@@ -58,7 +58,7 @@ class CategoryServiceImplTest extends Specification {
         def categoryId = "600001506"
         def labelType = "ShowPercDscount"
         //doReturn(jsonObject).when(categoryApi.getCategoryById(categoryId,"apiKey"))
-        when(categoryApi.getCategoryById(categoryId, "")).thenReturn(jsonObject)
+        when(categoryApi.getCategoryById(categoryId)).thenReturn(jsonObject)
         when: "Getting expected products"
         def products = categoryService.getCategory(categoryId, labelType)
         then: "expecting that price label displays the percentage value"
@@ -70,7 +70,7 @@ class CategoryServiceImplTest extends Specification {
         def categoryId = "600001506"
         def labelType = "ShowPercDsco"
         //doReturn(jsonObject).when(categoryApi.getCategoryById(categoryId,"apiKey"))
-        when(categoryApi.getCategoryById(categoryId, "")).thenReturn(jsonObject)
+        when(categoryApi.getCategoryById(categoryId)).thenReturn(jsonObject)
         when: "Expecting the Invalid Label Type Exception"
         categoryService.getCategory(categoryId, labelType)
         then: "expecting that Category Not Found Exception Thrown"

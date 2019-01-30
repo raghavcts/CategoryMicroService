@@ -10,7 +10,6 @@ import feign.RequestLine
 @Headers("Accept: application/json", "Content-Type: application/json")
 interface CategoryApi {
     @Throws(CategoryException::class, CategoryNotFoundException::class)
-    @RequestLine("GET /v1/categories/{categoryId}/products?key={apiKey}")
-    fun getCategoryById(@Param("categoryId") categoryId:
-                        String, @Param("apiKey") apiKey: String): JsonObject
+    @RequestLine("GET /v1/categories/{categoryId}/products")
+    fun getCategoryById(@Param("categoryId") categoryId: String): JsonObject
 }

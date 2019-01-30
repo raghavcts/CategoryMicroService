@@ -11,7 +11,8 @@ import feign.slf4j.Slf4jLogger
 import org.springframework.stereotype.Component
 
 @Component
-class FeignClientBuilder(private val apiTimeoutProperties: APITimeoutProperties) {
+class FeignClientBuilder(private val apiTimeoutProperties: APITimeoutProperties,
+                         private val apiKeyInterceptor: ApiKeyInterceptor) {
 
     fun <T> getFeignClient(categoryApiConfiguration: ApiConfiguration, apiClass: Class<T>): T {
         return Feign.builder()
@@ -19,6 +20,7 @@ class FeignClientBuilder(private val apiTimeoutProperties: APITimeoutProperties)
                         apiTimeoutProperties.readMillis.toInt()))
                 .client(OkHttpClient())
                 .encoder(GsonEncoder())
+                .requestInterceptor(apiKeyInterceptor)
                 .decoder(GsonDecoder())
                 .logger(Slf4jLogger(apiClass))
                 .logLevel(Logger.Level.FULL)

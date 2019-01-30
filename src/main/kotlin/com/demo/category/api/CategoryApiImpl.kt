@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component
 
 
 @Component
-class CategoryApiImpl(val feignClientBuilder: FeignClientBuilder, categoryApiConfiguration: ApiConfiguration) : CategoryApi {
+class CategoryApiImpl(private val feignClientBuilder: FeignClientBuilder, private val categoryApiConfiguration: ApiConfiguration) : CategoryApi {
 
     val categoryApi: CategoryApi by lazy { feignClientBuilder.getFeignClient(categoryApiConfiguration, CategoryApi::class.java) }
-    override fun getCategoryById(categoryId: String, apiKey: String): JsonObject {
-        return categoryApi.getCategoryById(categoryId, apiKey)
+    override fun getCategoryById(categoryId: String): JsonObject {
+        return categoryApi.getCategoryById(categoryId)
     }
 
 }

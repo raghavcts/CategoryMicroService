@@ -10,18 +10,14 @@ import com.demo.category.util.ProductFormatter
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import kotlin.math.roundToInt
 
 @Service
 class CategoryServiceImpl(
         private var categoryApi: CategoryApi) : CategoryService {
-    @Value("\${category.api.key}")
-    val apiKey: String = ""
 
     override fun getCategory(categoryId: String, labelType: String?): Products {
-        val categoryReponse: JsonObject = categoryApi.getCategoryById(categoryId, apiKey)
+        val categoryReponse: JsonObject = categoryApi.getCategoryById(categoryId)
         val products: Products? = parseCategoryResponse(categoryReponse, labelType)
         return products!!
     }
