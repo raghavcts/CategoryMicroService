@@ -37,6 +37,9 @@ ext {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix-dashboard'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation "org.jetbrains.kotlin:kotlin-reflect"
     compileOnly 'org.projectlombok:lombok'
@@ -44,6 +47,7 @@ dependencies {
     compile group: 'io.github.openfeign', name: 'feign-gson', version: '9.6.0'
     compile group: 'io.github.openfeign', name: 'feign-core', version: '9.6.0'
     compile group: 'io.github.openfeign', name: 'feign-slf4j', version: '9.3.1'
+    compile group: 'io.github.openfeign', name: 'feign-hystrix', version: '9.6.0'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.8'
     compile "io.springfox:springfox-swagger2:2.9.2"
     compile 'org.springframework.boot:spring-boot-starter-test'

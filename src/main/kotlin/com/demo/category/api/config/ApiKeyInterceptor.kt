@@ -1,4 +1,4 @@
-package com.demo.category.common
+package com.demo.category.api.config
 
 import feign.RequestInterceptor
 import feign.RequestTemplate

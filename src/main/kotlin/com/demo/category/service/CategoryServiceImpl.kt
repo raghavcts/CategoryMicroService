@@ -17,7 +17,7 @@ class CategoryServiceImpl(
         private var categoryApi: CategoryApi) : CategoryService {
 
     override fun getCategory(categoryId: String, labelType: String?): Products {
-        val categoryReponse: JsonObject = categoryApi.getCategoryById(categoryId)
+        val categoryReponse: JsonObject = categoryApi.getCategoryById(categoryId).execute()
         val products: Products? = parseCategoryResponse(categoryReponse, labelType)
         return products!!
     }
@@ -46,7 +46,8 @@ class CategoryServiceImpl(
                 val colorSwatches: MutableList<ColorSwatches> = createColorSwatches(colorSwatchesResp)
                 val priceLabel: String? = ProductFormatter.calculatePricelabel(wasPrice, nowPrice,
                         price.asJsonObject["then1"], price.asJsonObject["then2"], currencyCode, labelType)
-                val product = Product(productId, title, ProductFormatter.formatPriceLabel(nowPrice!!, currencyCode)!!, priceLabel!!, colorSwatches)
+                val product = Product(productId, title, ProductFormatter.formatPriceLabel(nowPrice!!, currencyCode)!!,
+                        priceLabel!!, colorSwatches)
                 product.maxReduction = priceReduction
                 productList!!.add(product)
             }

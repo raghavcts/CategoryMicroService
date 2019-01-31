@@ -32,14 +32,14 @@ class CategoryController(@Autowired
             val products: Products? = categoryService.getCategory(categoryId, labelType)
             ResponseEntity.ok(products!!)
         } catch (e: CategoryException) {
-            log.error("Internal Error Occured${e.printStackTrace()}")
+            log.error("Internal Error Occurred ${e.message}")
             ResponseEntity.ok(Products(arrayListOf()))
         } catch (e: CategoryNotFoundException) {
             log.error("No data found for selected category")
             val map: HashMap<String, String> = hashMapOf("Status" to e.responseStatus)
             ResponseEntity.ok(map)
         } catch (e: Exception) {
-            log.error("Unknown Error Occured${e.printStackTrace()}")
+            log.error("Unknown Error Occurred ${e.message}")
             ResponseEntity.ok(Products(arrayListOf()))
         }
     }

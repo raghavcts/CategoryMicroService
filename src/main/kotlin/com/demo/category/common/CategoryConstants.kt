@@ -5,4 +5,5 @@ object CategoryConstants {
     const val SHOW_PERC_DISCOUNT = "ShowPercDscount"
     const val SHOW_WAS_NOW = "ShowWasNow"
     const val DFAULT_ZERO_VAL = "0.00"
+    const val CIRCUIT_BREAKER_GROUP_KEY = "api"
 }

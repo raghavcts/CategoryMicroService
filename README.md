@@ -62,6 +62,12 @@ http://localhost:8080/swagger-ui.html#/
 
 The api endpoint is http://localhost:8080/category/{categoryId}
 
+## Hystrix Dashboard available in below link
+
+http://localhost:8080/hystrix/monitor?stream=http%3A%2F%2Flocalhost%3A8080%2Factuator%2Fhystrix.stream&title=CategoryMicroService
+
+The api endpoint is http://localhost:8080/category/{categoryId}
+
 
 
 

@@ -2,22 +2,27 @@ package com.demo.category.service
 
 import com.demo.category.api.CategoryApi
 import com.demo.category.common.exception.CategoryNotFoundException
+import com.demo.category.service.CategoryService
+import com.demo.category.service.CategoryServiceImpl
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.stream.JsonReader
+import com.netflix.hystrix.HystrixCommand
 import org.springframework.util.ResourceUtils
 import spock.lang.Specification
 
 import static org.mockito.Mockito.*
 
-class CategoryServiceImplTest extends Specification {
+class CategoryServiceTest extends Specification {
 
     CategoryService categoryService
     CategoryApi categoryApi
     JsonObject jsonObject
+    HystrixCommand<JsonObject> hystrixObj;
 
     def setup() {
         categoryApi = mock(CategoryApi.class)
+        hystrixObj = mock(HystrixCommand.class)
         buildJsonObject()
         categoryService = spy(new CategoryServiceImpl(categoryApi))
     }
@@ -34,7 +39,8 @@ class CategoryServiceImplTest extends Specification {
         def categoryId = "600001506"
         def labelType = "ShowWasThenNow"
         //doReturn(jsonObject).when(categoryApi.getCategoryById(categoryId,"apiKey"))
-        when(categoryApi.getCategoryById(categoryId)).thenReturn(jsonObject)
+        when(categoryApi.getCategoryById(categoryId)).thenReturn(hystrixObj)
+        when(hystrixObj.execute()).thenReturn(jsonObject)
         when: "Getting expected products"
         def products = categoryService.getCategory(categoryId, labelType)
         then: "expecting that price label displays the was,then and now values"
@@ -46,7 +52,8 @@ class CategoryServiceImplTest extends Specification {
         def categoryId = "600001506"
         def labelType = "ShowWasNow"
         //doReturn(jsonObject).when(categoryApi.getCategoryById(categoryId,"apiKey"))
-        when(categoryApi.getCategoryById(categoryId)).thenReturn(jsonObject)
+        when(categoryApi.getCategoryById(categoryId)).thenReturn(hystrixObj)
+        when(hystrixObj.execute()).thenReturn(jsonObject)
         when: "Getting expected products"
         def products = categoryService.getCategory(categoryId, labelType)
         then: "expecting that price label displays the was and now values"
@@ -58,7 +65,8 @@ class CategoryServiceImplTest extends Specification {
         def categoryId = "600001506"
         def labelType = "ShowPercDscount"
         //doReturn(jsonObject).when(categoryApi.getCategoryById(categoryId,"apiKey"))
-        when(categoryApi.getCategoryById(categoryId)).thenReturn(jsonObject)
+        when(categoryApi.getCategoryById(categoryId)).thenReturn(hystrixObj)
+        when(hystrixObj.execute()).thenReturn(jsonObject)
         when: "Getting expected products"
         def products = categoryService.getCategory(categoryId, labelType)
         then: "expecting that price label displays the percentage value"
@@ -70,7 +78,8 @@ class CategoryServiceImplTest extends Specification {
         def categoryId = "600001506"
         def labelType = "ShowPercDsco"
         //doReturn(jsonObject).when(categoryApi.getCategoryById(categoryId,"apiKey"))
-        when(categoryApi.getCategoryById(categoryId)).thenReturn(jsonObject)
+        when(categoryApi.getCategoryById(categoryId)).thenReturn(hystrixObj)
+        when(hystrixObj.execute()).thenReturn(jsonObject)
         when: "Expecting the Invalid Label Type Exception"
         categoryService.getCategory(categoryId, labelType)
         then: "expecting that Category Not Found Exception Thrown"

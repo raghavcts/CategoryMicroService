@@ -1,4 +1,4 @@
-package com.demo.category.common
+package com.demo.category.api.config
 
 import com.demo.category.common.exception.CategoryException
 import com.demo.category.common.exception.CategoryNotFoundException
