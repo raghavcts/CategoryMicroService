@@ -60,18 +60,11 @@ http://localhost:8080/swagger-ui.html#/
 
 ## API Endpoint
 
-The api endpoint is http://localhost:8080/category/{categoryId}
+The api endpoint is http://localhost:8080/category/{categoryId}?labelType={labelType}
 
 ## Hystrix Dashboard available in below link
 
 http://localhost:8080/hystrix/monitor?stream=http%3A%2F%2Flocalhost%3A8080%2Factuator%2Fhystrix.stream&title=CategoryMicroService
-
-The api endpoint is http://localhost:8080/category/{categoryId}
-
-
-
-
-
 
 
 Formatted JSON response of discounted products under that category or Respective Error messages should get displayed on the browser.
