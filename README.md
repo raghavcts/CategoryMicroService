@@ -60,7 +60,8 @@ http://localhost:8080/swagger-ui.html#/
 
 ## API Endpoint
 
-The api endpoint is http://localhost:8080/category/{categoryId}?labelType={labelType}
+The api endpoint with out labelType parameter is  http://localhost:8080/category/{categoryId}
+The api endpoint with labelType is parameter http://localhost:8080/category/{categoryId}?labelType={labelType}
 
 ## Hystrix Dashboard available in below link
 
