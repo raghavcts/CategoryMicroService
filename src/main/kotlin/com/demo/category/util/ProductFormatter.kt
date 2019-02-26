@@ -12,12 +12,12 @@ object ProductFormatter {
     fun formatPriceLabel(price: String?, currencyCode: String = "GBP"): String? {
         val currency = Currency.getInstance(currencyCode)
         val symbol = currency.symbol
-        var priceLablefmt: String? = "0.00"
+        var priceLablefmt: String? = CategoryConstants.DFAULT_ZERO_VAL
         if (!price.isNullOrEmpty()) {
-            val priceFloat: Float = price?.toFloat() ?: 0.00f
+            val priceFloat: Float = price?.toFloat() ?: CategoryConstants.DFAULT_ZERO__FLOAT_VAL
             priceLablefmt = if (priceFloat > 10)
                 symbol + priceFloat.toInt()
-            else """$symbol${"%.2f".format(price!!.toBigDecimal())}"""
+            else """$symbol${CategoryConstants.PRICE_FORMAT.format(price!!.toBigDecimal())}"""
         }
         return priceLablefmt
     }
@@ -41,17 +41,21 @@ object ProductFormatter {
 
         when (labelType) {
             CategoryConstants.SHOW_WAS_TEHN_NOW -> {
-                priceLabel = if (thenPriceFmt.equals(CategoryConstants.DFAULT_ZERO_VAL)) "was $wasPriceFmt,now $nowPriceFmt"
-                else "was $wasPriceFmt,then $thenPriceFmt,now $nowPriceFmt"
+                priceLabel = if (thenPriceFmt.equals(CategoryConstants.DFAULT_ZERO_VAL))
+                    "${CategoryConstants.WAS} $wasPriceFmt,${CategoryConstants.NOW} $nowPriceFmt"
+                else "${CategoryConstants.WAS} $wasPriceFmt,${CategoryConstants.THEN} " +
+                        "$thenPriceFmt,${CategoryConstants.NOW} $nowPriceFmt"
             }
             CategoryConstants.SHOW_PERC_DISCOUNT -> {
                 if (!was.equals(CategoryConstants.DFAULT_ZERO_VAL)) {
                     val discount: Float = ((was!!.toFloat() - now!!.toFloat()) / was.toFloat()) * 100
                     val disountString: String? = formatPriceLabel(discount.toString())
-                    priceLabel = "$disountString% off - now $nowPriceFmt"
+                    priceLabel = "$disountString${CategoryConstants.DISCOUNT_SYMBOL} " +
+                            "${CategoryConstants.OFF} - ${CategoryConstants.NOW} $nowPriceFmt"
                 }
             }
-            CategoryConstants.SHOW_WAS_NOW -> priceLabel = "was $wasPriceFmt,now $nowPriceFmt"
+            CategoryConstants.SHOW_WAS_NOW -> priceLabel = "${CategoryConstants.WAS} $wasPriceFmt," +
+                    "${CategoryConstants.NOW} $nowPriceFmt"
             else -> throw CategoryNotFoundException(HttpStatus.NOT_FOUND.value(), "Invalid Price Label Input")
 
         }
