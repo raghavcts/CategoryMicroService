@@ -13,4 +13,5 @@ object CategoryConstants {
     const val NOW = "now"
     const val OFF = "off"
     const val DISCOUNT_SYMBOL = "%"
+    const val DEFAULT_CURRENCY_CODE = "GBP"
 }

@@ -9,7 +9,7 @@ import java.util.*
 import kotlin.math.roundToInt
 
 object ProductFormatter {
-    fun formatPriceLabel(price: String?, currencyCode: String = "GBP"): String? {
+    fun formatPriceLabel(price: String?, currencyCode: String = CategoryConstants.DEFAULT_CURRENCY_CODE): String? {
         val currency = Currency.getInstance(currencyCode)
         val symbol = currency.symbol
         var priceLablefmt: String? = CategoryConstants.DFAULT_ZERO_VAL
