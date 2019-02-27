@@ -24,7 +24,9 @@ class CategoryController(@Autowired
 
     @ApiOperation(value = "Displays the filtered products")
     @GetMapping("/category/{categoryId}", produces = ["application/json"])
-    fun getProductsBycategoryId(@PathVariable("categoryId") categoryId: String
+    fun getProductsBycategoryId(@PathVariable("categoryId")
+                                @ApiParam(value = "Example category Id:600001506")
+                                categoryId: String
                                 , @RequestParam("labelType", required = false, defaultValue = "ShowWasNow")
                                 @ApiParam(value = "Label Type Would be ShowWasNow,ShowWasThenNow,ShowPercDscount")
                                 labelType: String): ResponseEntity<Any> {
