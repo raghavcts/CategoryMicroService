@@ -9,12 +9,12 @@ import java.util.*
 import kotlin.math.roundToInt
 
 object ProductFormatter {
-    fun formatPriceLabel(price: String?, currencyCode: String = CategoryConstants.DEFAULT_CURRENCY_CODE): String? {
+    fun formatPriceLabel(price: String?, currencyCode: String = "GBP"): String? {
         val currency = Currency.getInstance(currencyCode)
         val symbol = currency.symbol
         var priceLablefmt: String? = CategoryConstants.DFAULT_ZERO_VAL
         if (!price.isNullOrEmpty()) {
-            val priceFloat: Float = price?.toFloat() ?: CategoryConstants.DFAULT_ZERO__FLOAT_VAL
+            val priceFloat: Float = price?.toFloat() ?: 0.00f
             priceLablefmt = if (priceFloat > 10)
                 symbol + priceFloat.toInt()
             else """$symbol${CategoryConstants.PRICE_FORMAT.format(price!!.toBigDecimal())}"""
@@ -50,7 +50,7 @@ object ProductFormatter {
                 if (!was.equals(CategoryConstants.DFAULT_ZERO_VAL)) {
                     val discount: Float = ((was!!.toFloat() - now!!.toFloat()) / was.toFloat()) * 100
                     val disountString: String? = formatPriceLabel(discount.toString())
-                    priceLabel = "$disountString${CategoryConstants.DISCOUNT_SYMBOL} " +
+                    priceLabel = "$disountString% "
                             "${CategoryConstants.OFF} - ${CategoryConstants.NOW} $nowPriceFmt"
                 }
             }
