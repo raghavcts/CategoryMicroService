@@ -50,8 +50,7 @@ object ProductFormatter {
                 if (!was.equals(CategoryConstants.DFAULT_ZERO_VAL)) {
                     val discount: Float = ((was!!.toFloat() - now!!.toFloat()) / was.toFloat()) * 100
                     val disountString: String? = formatPriceLabel(discount.toString())
-                    priceLabel = "$disountString% "
-                            "${CategoryConstants.OFF} - ${CategoryConstants.NOW} $nowPriceFmt"
+                    priceLabel = "$disountString% ${CategoryConstants.OFF} - ${CategoryConstants.NOW} $nowPriceFmt"
                 }
             }
             CategoryConstants.SHOW_WAS_NOW -> priceLabel = "${CategoryConstants.WAS} $wasPriceFmt," +
